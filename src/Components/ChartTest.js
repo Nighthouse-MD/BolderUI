@@ -1,5 +1,6 @@
 import * as React from 'react';
-import Paper from '@material-ui/core/Paper';
+import { Paper } from '@mui/material';
+
 import {
     ArgumentAxis,
     ValueAxis,
@@ -13,7 +14,7 @@ const data = [
     { argument: 3, value: 30 },
 ];
 
-export default () => (
+const ChartTest = () => (
     <Paper>
         <Chart
             data={data}
@@ -25,3 +26,5 @@ export default () => (
         </Chart>
     </Paper>
 );
+
+export default ChartTest;
