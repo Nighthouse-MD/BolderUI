@@ -51,9 +51,9 @@ function NavigationDrawer({ props }) {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" noWrap component="div">
+        <h3>
           Bolder Explorer
-        </Typography>
+        </h3>
       </Toolbar>
     </AppBar>
     <Drawer

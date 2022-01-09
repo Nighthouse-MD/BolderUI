@@ -1,27 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Grid, Container, Box, FormControlLabel, Switch } from '@mui/material';
-import * as helper from './ProductExplorerHelper';
+import React, { useState } from 'react';
+import { Button, Grid, Container, Box, FormControlLabel, Switch } from '@mui/material';
 import Loader from "react-js-loader";
 import SearchIcon from '@mui/icons-material/Search';
 import { Search, SearchIconWrapper, StyledInputBase } from './StyledComponents';
-import { styled } from "@mui/material/styles";
 import mergeDeep from '../../../tools/mergeDeep';
-
-const StyledProductGridElement = styled(Grid)(({ theme }) => ({
-    backgroundColor: theme.palette.secondary.dark
-}));
-
-const productGridElement = (product, stats) => {
-    const amountOfStatRows = stats.filter(ps => ps.productToTrackId === product.id.toString()).length;
-    return <StyledProductGridElement item sm={3} md={4}>
-        <div>{`${product.name} - ${product.fetchedOn} - ${product.inactivatedOn ? 'Inactive -' : ''} ${amountOfStatRows}`}</div>
-
-    </StyledProductGridElement>;
-}
-
-const emptyGridElement = <StyledProductGridElement item sm={12} md={12}>
-    No products found
-</StyledProductGridElement>;
+import useProducts from './ProductHook';
 
 const ProductExplorer = () => {
     const [filter, setFilter] = useState({
@@ -30,32 +13,9 @@ const ProductExplorer = () => {
         page: 1,
         reloadAll: false
     });
-    const [products, setProducts] = useState([]);
-    const [productStatistics, setProductStatistics] = useState([]);
-    const [loadingCounter, setLoadingCounter] = useState(0);
 
-    useEffect(() => {
-        setLoadingCounter(prevValue => prevValue + 1);
-        helper.listProducts(filter).then(result => {
-            const loadedProducts = result.data.products;
-            setLoadingCounter(prevValue => prevValue - 1);
+    const { products, loadingCounter } = useProducts(filter)
 
-            if (loadedProducts.length > 0) {
-                setLoadingCounter(prevValue => prevValue + 1);
-                helper.listProductStatistics(loadedProducts.map(p => p.id))
-                    .then(statsResult => {
-                        const updatedStats = (filter.page === 1 ? [] : productStatistics).concat(statsResult.data.productStatistics);
-                        setProductStatistics(updatedStats);
-
-                        setLoadingCounter(prevValue => prevValue - 1);
-                        setProducts((filter.page === 1 ? [] : products).concat(loadedProducts.map(p => productGridElement(p, updatedStats))));
-                    });
-            } else {
-                setProductStatistics([]);
-                setProducts([]);
-            }
-        });
-    }, [filter.page, filter.searchWord, filter.showActiveOnly]);
 
     const onChangeSearch = (e) => {
         e.preventDefault();
