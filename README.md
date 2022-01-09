@@ -20,3 +20,9 @@ https://www.apollographql.com/
 
 Next.js
 https://nextjs.org/learn/basics/create-nextjs-app?utm_source=next-site&utm_medium=homepage-cta&utm_campaign=next-website
+
+React Observer pattern
+https://javascript.plainenglish.io/react-hooks-and-the-observer-pattern-1e4274f0e5f5
+
+Pub-Sub
+https://itnext.io/why-every-beginner-front-end-developer-should-know-publish-subscribe-pattern-72a12cd68d44

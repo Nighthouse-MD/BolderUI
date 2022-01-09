@@ -1,6 +1,9 @@
 import axios from 'axios';
+import * as constants from '../../../constants';
 
-const url = '';//'http://localhost:3000';
+let url = '';//'http://localhost:3000';
+
+url = `${url}/${constants.API_KEY}`;
 
 const listProducts = (filter) => {
     return axios.post(`${url}/products/byfilter`, filter
@@ -10,7 +13,6 @@ const listProducts = (filter) => {
         console.log(error);
     });
 }
-
 
 const listProductStatistics = (productIds) => {
     return axios.post(`${url}/productstatistics/byproductids`,

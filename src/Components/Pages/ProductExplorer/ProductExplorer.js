@@ -27,70 +27,41 @@ const ProductExplorer = () => {
     const [filter, setFilter] = useState({
         searchWord: '',
         showActiveOnly: true,
-        page: 1
+        page: 1,
+        reloadAll: false
     });
     const [products, setProducts] = useState([]);
     const [productStatistics, setProductStatistics] = useState([]);
     const [loadingCounter, setLoadingCounter] = useState(0);
 
     useEffect(() => {
-        if (filter.page <= 1) return;
-
-        setLoadingCounter(loadingCounter + 1);
+        setLoadingCounter(prevValue => prevValue + 1);
         helper.listProducts(filter).then(result => {
             const loadedProducts = result.data.products;
+            setLoadingCounter(prevValue => prevValue - 1);
 
             if (loadedProducts.length > 0) {
-                setLoadingCounter(loadingCounter + 1);
+                setLoadingCounter(prevValue => prevValue + 1);
                 helper.listProductStatistics(loadedProducts.map(p => p.id))
                     .then(statsResult => {
-                        setLoadingCounter(loadingCounter - 1);
-
-                        const updatedStats = productStatistics.concat(statsResult.data.productStatistics);
+                        const updatedStats = (filter.page === 1 ? [] : productStatistics).concat(statsResult.data.productStatistics);
                         setProductStatistics(updatedStats);
 
-                        setLoadingCounter(loadingCounter - 1);
-                        setProducts(products.concat(loadedProducts.map(p => productGridElement(p, updatedStats))));
-                    });
-            }
-        });
-    }, [filter.page]);
-
-    useEffect(() => {
-        reload();
-    }, [filter.searchWord, filter.showActiveOnly]);
-
-    const reload = () => {
-        setLoadingCounter(loadingCounter + 1);
-        const filterToUpdate = mergeDeep({}, filter);
-        filterToUpdate.page = 1;
-        setFilter(filterToUpdate);
-
-        helper.listProducts(filterToUpdate).then(result => {
-            const loadedProducts = result.data.products;
-
-            if (loadedProducts.length > 0) {
-                setLoadingCounter(loadingCounter + 1);
-                helper.listProductStatistics(loadedProducts.map(p => p.id))
-                    .then(statsResult => {
-                        setLoadingCounter(loadingCounter - 1);
-
-                        const updatedStats = statsResult.data.productStatistics;
-                        setProductStatistics(updatedStats);
-
-                        setLoadingCounter(loadingCounter - 1);
-                        setProducts(loadedProducts.map(p => productGridElement(p, updatedStats)));
+                        setLoadingCounter(prevValue => prevValue - 1);
+                        setProducts((filter.page === 1 ? [] : products).concat(loadedProducts.map(p => productGridElement(p, updatedStats))));
                     });
             } else {
-                setProducts([emptyGridElement]);
+                setProductStatistics([]);
+                setProducts([]);
             }
         });
-    };
+    }, [filter.page, filter.searchWord, filter.showActiveOnly]);
 
     const onChangeSearch = (e) => {
         e.preventDefault();
         const filterToUpdate = mergeDeep({}, filter);
         filterToUpdate.searchWord = e.target.value;
+        filterToUpdate.page = 1;
         setFilter(filterToUpdate);
     }
 
@@ -98,6 +69,7 @@ const ProductExplorer = () => {
         e.preventDefault();
         const filterToUpdate = mergeDeep({}, filter);
         filterToUpdate.showActiveOnly = !filter.showActiveOnly;
+        filterToUpdate.page = 1;
         setFilter(filterToUpdate);
     }
 
