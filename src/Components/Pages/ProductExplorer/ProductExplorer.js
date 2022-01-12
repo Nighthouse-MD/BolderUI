@@ -16,7 +16,6 @@ const ProductExplorer = () => {
 
     const { products, loadingCounter } = useProducts(filter)
 
-
     const onChangeSearch = (e) => {
         e.preventDefault();
         const filterToUpdate = mergeDeep({}, filter);

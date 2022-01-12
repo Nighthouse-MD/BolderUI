@@ -3,7 +3,7 @@ import * as constants from '../../../constants';
 
 let url = '';//'http://localhost:3000';
 
-url = `${url}/${constants.API_KEY}`;
+url = `${url}/${constants.TEST_API_KEY}`;
 
 const listProducts = (filter) => {
     return axios.post(`${url}/products/byfilter`, filter
